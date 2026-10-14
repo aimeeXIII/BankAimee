@@ -17,6 +17,7 @@ def mask_account_card(info_string: str) -> str:
 
     return f"{name} {masked_number}"
 
+
 def get_date(date_string: str) -> str:
     """Принимает строку с датой в формате ISO и возвращает дату в формате ДД.ММ.ГГГГ."""
     # Извлекаем год, месяц и день с помощью срезов
