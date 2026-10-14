@@ -1,6 +1,7 @@
 import pytest
 from src.masks import get_mask_card_number, get_mask_account
 
+
 class TestGetMaskCardNumber:
     """Тесты маскирования номера карты."""
 
@@ -24,7 +25,6 @@ class TestGetMaskCardNumber:
 
     def test_fixture_with_spaces(self, valid_card_number_with_spaces: str) -> None:
         assert get_mask_card_number(valid_card_number_with_spaces) == "1234 56** **** 5678"
-
 
 
 class TestGetMaskAccount:

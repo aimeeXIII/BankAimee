@@ -59,7 +59,7 @@ class TestGetDate:
         "date_string, expected",
         [
             ("", ".."),             # пустая строка
-            ("2024-03", ".03.2024"), # слишком короткая
+            ("2024-03", ".03.2024"),  # слишком короткая
         ]
     )
     def test_get_date_edge_cases(self, date_string: str, expected: str) -> None:
