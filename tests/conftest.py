@@ -126,3 +126,14 @@ def broken_transactions() -> list[dict]:
         {"id": 3, "operationAmount": {"currency": {}}},              # нет code
         {"id": 4, "operationAmount": {"currency": {"code": "USD"}}}, # корректная USD
     ]
+
+@pytest.fixture
+def transaction_descriptions_list(transactions: list[dict]) -> list[str]:
+    """Список описаний в том же порядке, что и в transactions."""
+    return [
+        "Перевод организации",
+        "Перевод со счета на счет",
+        "Перевод со счета на счет",
+        "Перевод организации",
+        "Перевод с карты на счет",
+    ]
