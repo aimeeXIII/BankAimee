@@ -19,7 +19,6 @@ def valid_account_number() -> str:
     return "73654108430135874305"
 
 
-
 @pytest.fixture
 def card_info_string() -> str:
     """Строка вида '<Название карты> <номер>'."""
@@ -124,8 +123,9 @@ def broken_transactions() -> list[dict]:
         {"id": 1, "state": "EXECUTED"},                              # нет operationAmount
         {"id": 2, "operationAmount": {}},                            # нет currency
         {"id": 3, "operationAmount": {"currency": {}}},              # нет code
-        {"id": 4, "operationAmount": {"currency": {"code": "USD"}}}, # корректная USD
+        {"id": 4, "operationAmount": {"currency": {"code": "USD"}}},  # корректная USD
     ]
+
 
 @pytest.fixture
 def transaction_descriptions_list(transactions: list[dict]) -> list[str]:
