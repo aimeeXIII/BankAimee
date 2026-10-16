@@ -139,6 +139,7 @@ def transaction_descriptions_list(transactions: list[dict]) -> list[str]:
         "Перевод с карты на счет",
     ]
 
+
 @pytest.fixture
 def valid_transactions_file(tmp_path) -> str:
     """Создаёт валидный JSON-файл со списком транзакций, возвращает путь."""
