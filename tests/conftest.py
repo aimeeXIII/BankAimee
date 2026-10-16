@@ -1,3 +1,4 @@
+import json
 import pytest
 
 
@@ -137,3 +138,39 @@ def transaction_descriptions_list(transactions: list[dict]) -> list[str]:
         "Перевод организации",
         "Перевод с карты на счет",
     ]
+
+
+@pytest.fixture
+def valid_transactions_file(tmp_path) -> str:
+    """Создаёт валидный JSON-файл со списком транзакций, возвращает путь."""
+    data = [
+        {"id": 1, "state": "EXECUTED", "amount": "100.00"},
+        {"id": 2, "state": "CANCELED", "amount": "200.00"},
+    ]
+    file_path = tmp_path / "transactions.json"
+    file_path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    return str(file_path)
+
+
+@pytest.fixture
+def empty_file(tmp_path) -> str:
+    """Создаёт пустой файл, возвращает путь."""
+    file_path = tmp_path / "empty.json"
+    file_path.write_text("", encoding="utf-8")
+    return str(file_path)
+
+
+@pytest.fixture
+def json_dict_file(tmp_path) -> str:
+    """Файл, в котором JSON — словарь, а не список."""
+    file_path = tmp_path / "dict.json"
+    file_path.write_text(json.dumps({"key": "value"}), encoding="utf-8")
+    return str(file_path)
+
+
+@pytest.fixture
+def invalid_json_file(tmp_path) -> str:
+    """Файл с невалидным JSON."""
+    file_path = tmp_path / "invalid.json"
+    file_path.write_text("{not valid json", encoding="utf-8")
+    return str(file_path)
