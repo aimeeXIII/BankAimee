@@ -174,3 +174,48 @@ def invalid_json_file(tmp_path) -> str:
     file_path = tmp_path / "invalid.json"
     file_path.write_text("{not valid json", encoding="utf-8")
     return str(file_path)
+
+
+@pytest.fixture
+def rub_transaction() -> dict:
+    """Транзакция в рублях."""
+    return {
+        "operationAmount": {
+            "amount": "1000.50",
+            "currency": {"name": "руб.", "code": "RUB"},
+        }
+    }
+
+
+@pytest.fixture
+def usd_transaction() -> dict:
+    """Транзакция в USD."""
+    return {
+        "operationAmount": {
+            "amount": "100.00",
+            "currency": {"name": "USD", "code": "USD"},
+        }
+    }
+
+
+@pytest.fixture
+def eur_transaction() -> dict:
+    """Транзакция в EUR."""
+    return {
+        "operationAmount": {
+            "amount": "50.00",
+            "currency": {"name": "EUR", "code": "EUR"},
+        }
+    }
+
+
+@pytest.fixture
+def mock_api_response_success() -> dict:
+    """Успешный ответ API."""
+    return {"success": True, "result": 90.5}
+
+
+@pytest.fixture
+def mock_api_response_error() -> dict:
+    """Ответ API с ошибкой."""
+    return {"success": False, "error": {"info": "Invalid API key"}}
