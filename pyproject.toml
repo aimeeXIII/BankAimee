@@ -12,6 +12,8 @@ requests = "^2.34.2"
 
 [tool.poetry.dependencies]
 python = "^3.14"
+python-dotenv = "^1.2.4"
+requests = "^2.34.2"
 
 [tool.poetry.group.lint.dependencies]
 black = "^26.5.1"
