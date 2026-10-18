@@ -177,6 +177,73 @@ for card_number in card_number_generator(1, 5):
 # 0000 0000 0000 0005
 ```
 
+### 5. Модуль `utils`
+
+Содержит утилиты для загрузки данных о транзакциях из файлов.
+
+* **`load_transactions(file_path)`**: Загружает список транзакций из файла. Поддерживает три формата:
+  * **JSON** (`.json`) — ожидает список словарей;
+  * **CSV** (`.csv`) — считывается с помощью `pandas`;
+  * **Excel** (`.xlsx`) — считывается с помощью `pandas` и `openpyxl`.
+
+  Если файл не найден, пуст, содержит некорректные данные или имеет неподдерживаемое расширение, функция возвращает пустой список `[]`. Все действия и ошибки логируются в папку `logs/`.
+
+**Пример использования:**
+```python
+from src.utils import load_transactions
+
+# Загрузка JSON (как и раньше)
+json_data = load_transactions("data/operations.json")
+
+# Загрузка CSV
+csv_data = load_transactions("data/transactions.csv")
+
+# Загрузка Excel
+xlsx_data = load_transactions("data/transactions_excel.xlsx")
+
+print(f"Загружено из CSV: {len(csv_data)} транзакций")
+```
+
+### 6. Модуль `external_api`
+
+Содержит функции для конвертации валют через внешний сервис **Exchange Rates Data API** (apilayer).
+
+* **`get_exchange_rate(from_currency, to_currency)`**: Делает запрос к API и возвращает текущий курс конвертации (тип `float`). Требует наличия API-ключа в переменной окружения.
+* **`convert_transaction_to_rub(transaction)`**: Принимает словарь с данными транзакции и возвращает её сумму в рублях.
+  * Для транзакций в **RUB** сумма возвращается сразу, без запросов к API.
+  * Для транзакций в **USD** или **EUR** сумма конвертируется по текущему курсу через `get_exchange_rate`.
+  * Для остальных валют выбрасывается `ValueError`.
+
+**Настройка окружения:**
+Для работы модуля нужен API-ключ. Создайте в корне проекта файл `.env` и добавьте в него:
+```
+EXCHANGE_RATES_API_KEY=ваш_ключ_от_apilayer
+```
+*Шаблон для файла `.env` находится в `.env.example`. Сам файл `.env` добавлен в `.gitignore` и не попадает в репозиторий.*
+
+**Пример использования:**
+```python
+from src.external_api import convert_transaction_to_rub
+
+transaction = {
+    "operationAmount": {
+        "amount": "100.00",
+        "currency": {"name": "USD", "code": "USD"}
+    }
+}
+
+rub_amount = convert_transaction_to_rub(transaction)
+print(f"Сумма в рублях: {rub_amount}")
+```
+
+### 7. Логирование
+
+Для модулей `masks` и `utils` реализовано логирование с помощью стандартной библиотеки `logging`.
+* Логи записываются в папку `logs/` в корне проекта (файлы `masks.log` и `utils.log`).
+* Формат записи: `Время - Имя модуля - Уровень - Сообщение`.
+* Логи **перезаписываются** при каждом новом запуске приложения.
+* Папка `logs/` добавлена в `.gitignore`, так как содержит только временные данные.
+
 ## Тестирование
 Для запуска автоматических тестов выполните в корне проекта команду:
 ```bash
