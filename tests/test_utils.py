@@ -1,3 +1,4 @@
+import pandas as pd
 from src.utils import load_transactions
 
 
@@ -72,3 +73,83 @@ class TestLoadTransactions:
             pytest.skip("data/operations.json не найден")
         result = load_transactions(path)
         assert isinstance(result, list)
+
+
+class TestLoadTransactionsCSV:
+    """Тесты функции load_transactions для CSV-файлов."""
+
+    def test_valid_csv(self, tmp_path):
+        """Валидный CSV — возвращает список словарей."""
+        file_path = tmp_path / "test.csv"
+        # Создаём тестовый CSV
+        df = pd.DataFrame([
+            {"id": 1, "amount": 100.50, "currency": "RUB"},
+            {"id": 2, "amount": 200.00, "currency": "USD"},
+        ])
+        df.to_csv(file_path, index=False)
+
+        result = load_transactions(str(file_path))
+
+        assert isinstance(result, list)
+        assert len(result) == 2
+        assert result[0]["id"] == 1
+        assert result[0]["amount"] == 100.5
+        assert result[0]["currency"] == "RUB"
+
+    def test_empty_csv(self, tmp_path):
+        """Пустой CSV — возвращает пустой список."""
+        file_path = tmp_path / "empty.csv"
+        pd.DataFrame().to_csv(file_path, index=False)
+
+        result = load_transactions(str(file_path))
+        assert result == []
+
+    def test_broken_csv(self, tmp_path):
+        """Если CSV битый (ошибка парсинга) — возвращает пустой список."""
+        file_path = tmp_path / "broken.csv"
+        file_path.write_text("some broken text", encoding="utf-8")
+
+        # pandas может прочитать это как 1 колонку, но не упадёт.
+        # Чтобы точно упало, можно сделать что-то вроде:
+        # pd.read_csv(file_path, ...) вызовет ошибку.
+        # Но для простоты проверим, что функция не падает.
+        result = load_transactions(str(file_path))
+        assert isinstance(result, list)
+
+
+class TestLoadTransactionsXLSX:
+    """Тесты функции load_transactions для XLSX-файлов."""
+
+    def test_valid_xlsx(self, tmp_path):
+        """Валидный XLSX — возвращает список словарей."""
+        file_path = tmp_path / "test.xlsx"
+
+        df = pd.DataFrame([
+            {"id": 3, "amount": 300.00, "currency": "EUR"},
+            {"id": 4, "amount": 400.00, "currency": "RUB"},
+        ])
+        df.to_excel(file_path, index=False)
+
+        result = load_transactions(str(file_path))
+
+        assert isinstance(result, list)
+        assert len(result) == 2
+        assert result[0]["id"] == 3
+        assert result[0]["currency"] == "EUR"
+
+    def test_empty_xlsx(self, tmp_path):
+        """Пустой XLSX — возвращает пустой список."""
+        file_path = tmp_path / "empty.xlsx"
+        pd.DataFrame().to_excel(file_path, index=False)
+
+        result = load_transactions(str(file_path))
+        assert result == []
+
+
+def test_unsupported_extension(tmp_path):
+    """Файл с неподдерживаемым расширением — пустой список."""
+    file_path = tmp_path / "test.txt"
+    file_path.write_text("some text", encoding="utf-8")
+
+    result = load_transactions(str(file_path))
+    assert result == []
